@@ -20,7 +20,7 @@
     .view{display:none;padding:14px}
     .view.active{display:block}
     .btn{background:var(--accent);border:none;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;color:#071426;box-shadow:var(--shadow)}
-    .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+    .btn.ghost{background:transparent;border:1px solid var(--line);color:#e6edf3}
     .btn.small{padding:6px 9px;border-radius:8px;font-size:12px}
     input,select,textarea{background:#0b162b;border:1px solid var(--line);color:#e6edf3;border-radius:10px;padding:8px 10px}
     .pill{background:var(--chip);border:1px solid var(--line);padding:4px 8px;border-radius:999px;color:var(--muted);font-size:12px}
@@ -73,6 +73,10 @@
       <button class="btn ghost" id="btnImport">Import</button>
       <button class="btn" id="btnGrocery">Grocery List</button>
       <button class="btn" id="btnICS">Download .ics</button>
+      <!-- Cloud sync buttons -->
+      <button class="btn ghost" id="btnSignIn">Sign in</button>
+      <button class="btn ghost" id="btnCloudSave">Cloud Save</button>
+      <button class="btn ghost" id="btnCloudLoad">Cloud Load</button>
     </div>
   </header>
 
@@ -84,7 +88,7 @@
       <button class="btn small ghost" id="nextWeek">Next ▶</button>
       <span class="pill" id="rangeLabel"></span>
       <span class="pill">Drag a recipe into Dinner / GF Dinner</span>
-      <span class="pill">Double‑click a slot to add free‑text</span>
+      <span class="pill">Double-click a slot to add free-text</span>
     </div>
     <div class="planner-wrap">
       <aside class="palette">
@@ -419,6 +423,93 @@
     load();
     const today=startOfWeek(new Date()); $('#weekStart').value=fmtDate(today);
     renderPalette(); renderWeek();
+  </script>
+
+  <!-- Firebase (module, with Analytics + Auth + Firestore) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { initializeFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyANVcLOk4jSOBGD1M-oTYsBtw2y9mJDE0M",
+      authDomain: "nicefam-950ce.firebaseapp.com",
+      projectId: "nicefam-950ce",
+      storageBucket: "nicefam-950ce.firebasestorage.app",
+      messagingSenderId: "436089244975",
+      appId: "1:436089244975:web:c4f80fb839b6a22261a5da",
+      measurementId: "G-DSX114JGZ5"
+    };
+
+    // Init
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app); // optional
+
+    // Use long-polling (helps in some dev setups) and target the named DB "aasddd"
+    const db = initializeFirestore(
+      app,
+      { experimentalAutoDetectLongPolling: true, useFetchStreams: false },
+      "aasddd" // <-- your Firestore database ID
+    );
+
+    const auth = getAuth(app);
+
+    function userDocRef() {
+      const u = auth.currentUser;
+      if (!u) throw new Error("Not signed in");
+      return doc(db, "mealplanner", u.uid);
+    }
+
+    async function fbSignIn() {
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        alert("Signed in as " + auth.currentUser.email);
+      } catch (e) {
+        console.error(e.code, e.message);
+        alert("Sign-in failed");
+      }
+    }
+
+    async function cloudSave() {
+      try {
+        if (!auth.currentUser) await fbSignIn();
+        console.log("UID at save:", auth.currentUser?.uid);
+        const payload = { recipes: state.recipes, plan: state.plan, updatedAt: Date.now() };
+        await setDoc(userDocRef(), payload, { merge: true });
+        alert("Saved to cloud");
+      } catch (e) {
+        console.error("Cloud save failed:", e.code, e.message);
+        alert(`Cloud save failed: ${e.code || "error"}`);
+      }
+    }
+
+    async function cloudLoad() {
+      try {
+        if (!auth.currentUser) await fbSignIn();
+        console.log("UID at load:", auth.currentUser?.uid);
+        const snap = await getDoc(userDocRef());
+        if (!snap.exists()) { alert("No cloud data found"); return; }
+        const obj = snap.data();
+        state.recipes = (obj.recipes || []).map(enrichRecipe);
+        state.plan = obj.plan || {};
+        save(); renderPalette(); renderWeek(); renderRecipeList?.();
+        alert("Loaded from cloud");
+      } catch (e) {
+        console.error("Cloud load failed:", e.code, e.message);
+        alert(`Cloud load failed: ${e.code || "error"}`);
+      }
+    }
+
+    document.getElementById("btnSignIn")?.addEventListener("click", fbSignIn);
+    document.getElementById("btnCloudSave")?.addEventListener("click", cloudSave);
+    document.getElementById("btnCloudLoad")?.addEventListener("click", cloudLoad);
+
+    onAuthStateChanged(auth, (u) => {
+      console.log("Auth:", u ? u.email : "signed out");
+    });
   </script>
 </body>
 </html>
