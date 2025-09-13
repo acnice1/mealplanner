@@ -289,28 +289,59 @@
         max-height: 70vh;
         overflow: auto;
       }
+      .planner-wrap.collapsed {
+        grid-template-columns: 1fr;
+      }
+      .planner-wrap.collapsed .palette {
+        display: none;
+      }
+      .notes-wrap {
+        border-top: 1px dashed #1b2c52;
+        padding: 8px 10px;
+      }
+      .notes-wrap textarea {
+        width: 100%;
+        min-height: 56px;
+        resize: vertical;
+      }
 
-      /* Small inline calendar events list */
-      .day .gcal {
-        margin: 6px 10px 0;
-        padding: 0;
-        list-style: none;
-      }
-      .day .gcal li {
-        font-size: 12px;
-        color: #c7d2fe;
-        margin-bottom: 2px;
-      }
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #0b1830;
-        border: 1px solid var(--line);
-        color: #9fb3d6;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 12px;
+      @media print {
+        html,
+        body {
+          background: #fff;
+          color: #000;
+        }
+        header,
+        .tabs,
+        .palette,
+        .sticky-bottom,
+        .planner-toolbar,
+        .modal,
+        .btn,
+        .pill {
+          display: none !important;
+        }
+        .planner-wrap {
+          grid-template-columns: 1fr !important;
+        }
+        .day {
+          background: #fff;
+          color: #000;
+          border: 1px solid #999;
+        }
+        .day header {
+          background: #fff;
+          color: #000;
+          border-bottom: 1px solid #999;
+        }
+        .slot {
+          background: #fff;
+          border: 1px solid #ccc;
+        }
+        .assignment {
+          background: #fff;
+          border: none;
+        }
       }
     </style>
   </head>
@@ -320,19 +351,9 @@
         <div class="tab active" data-tab="planner">Planner</div>
         <div class="tab" data-tab="recipes">Recipes</div>
       </div>
-      <div style="display: flex; gap: 8px; align-items: center">
-        <span
-          id="calBadge"
-          class="badge"
-          title="Imported calendar events"
-          style="display: none"
-          >📅 <span id="calCount">0</span></span
-        >
+      <div>
         <button class="btn ghost" id="btnExport">Export</button>
         <button class="btn ghost" id="btnImport">Import</button>
-        <button class="btn ghost" id="btnICSImport">
-          Import .ics (Calendar)
-        </button>
         <button class="btn" id="btnGrocery">Grocery List</button>
         <button class="btn" id="btnICS">Download .ics</button>
       </div>
@@ -341,6 +362,7 @@
     <!-- Planner view -->
     <div class="view active" id="planner">
       <div
+        class="planner-toolbar no-print"
         style="
           display: flex;
           gap: 8px;
@@ -353,8 +375,10 @@
         <input type="date" id="weekStart" />
         <button class="btn small ghost" id="nextWeek">Next ▶</button>
         <span class="pill" id="rangeLabel"></span>
+        <button class="btn small ghost" id="togglePalette">Hide recipes</button>
+        <button class="btn small" id="btnPrint">Print week</button>
         <span class="pill">Drag a recipe into Dinner / GF Dinner</span>
-        <span class="pill">Double-click a slot to add free-text</span>
+        <span class="pill">Double‑click a slot to add free‑text</span>
       </div>
       <div class="planner-wrap">
         <aside class="palette">
@@ -486,7 +510,7 @@
       </div>
     </div>
 
-    <!-- Month Modal -->
+    <!-- Month Modal (lightweight) -->
     <div class="modal" id="monthModal">
       <div class="sheet">
         <header>
@@ -496,7 +520,6 @@
         <div class="body" id="monthBody"></div>
       </div>
     </div>
-
     <!-- Export Modal -->
     <div class="modal" id="exportModal">
       <div class="sheet">
@@ -505,7 +528,7 @@
           <button class="btn small ghost" data-close>Close</button>
         </header>
         <div class="body">
-          <div class="h">Your data (recipes + plan + calendar)</div>
+          <div class="h">Your data (recipes + plan)</div>
           <textarea id="exportText" rows="14" style="width: 100%"></textarea>
           <div style="display: flex; gap: 8px; margin-top: 8px">
             <button class="btn small" id="btnDownloadExport">
@@ -513,13 +536,6 @@
             </button>
             <button class="btn small ghost" id="btnCopyExport">
               Copy JSON
-            </button>
-            <button
-              class="btn small ghost"
-              id="btnClearCalendar"
-              title="Remove imported .ics events"
-            >
-              Clear Calendar
             </button>
           </div>
           <div class="note" style="margin-top: 8px">
@@ -536,7 +552,6 @@
       const state = {
         recipes: [],
         plan: {},
-        gcal: { events: [] }, // imported .ics events
         servingScale: 1,
         editingRid: null,
       };
@@ -548,13 +563,8 @@
       function save() {
         localStorage.setItem(
           "mealPlanner",
-          JSON.stringify({
-            recipes: state.recipes,
-            plan: state.plan,
-            gcal: state.gcal,
-          })
+          JSON.stringify({ recipes: state.recipes, plan: state.plan })
         );
-        updateCalBadge();
       }
       function load() {
         const s = localStorage.getItem("mealPlanner");
@@ -563,7 +573,6 @@
             const o = JSON.parse(s);
             state.recipes = (o.recipes || []).map(enrichRecipe);
             state.plan = o.plan || {};
-            state.gcal = o.gcal || { events: [] };
           } catch (e) {
             console.warn("bad save", e);
           }
@@ -620,7 +629,7 @@
       function enrichRecipe(r) {
         return {
           id: r.id || crypto.randomUUID(),
-          name: (r.name || "").trim(),
+          name: r.name.trim(),
           servings: Number(r.servings) || 4,
           tags: r.tags || [],
           link: r.link || "",
@@ -642,8 +651,7 @@
       function startOfWeek(d) {
         const x = new Date(d);
         const day = x.getDay();
-        const diff = (day + 6) % 7;
-        x.setDate(x.getDate() - diff);
+        x.setDate(x.getDate() - day);
         x.setHours(0, 0, 0, 0);
         return x;
       }
@@ -669,6 +677,7 @@
       function ensureDay(dateStr) {
         let day = state.plan[dateStr];
         if (!day) day = {};
+        if (typeof day.notes !== "string") day.notes = "";
         MEALS.forEach((m) => {
           if (!Array.isArray(day[m])) day[m] = [];
         });
@@ -680,166 +689,6 @@
         MEALS.forEach((m) => (day[m] = []));
         state.plan[dateStr] = day;
         return day;
-      }
-
-      /******************** .ICS import & parsing ********************/
-      // Minimal iCalendar parser extracting SUMMARY / DTSTART / DTEND
-      // Stores events as { summary, allDay, start: "YYYY-MM-DD", end: "YYYY-MM-DD" | null, startDT?: ISO, endDT?: ISO }
-      function unfoldICS(text) {
-        // Join folded lines (those starting with space or tab)
-        const lines = text.replace(/\r\n/g, "\n").split("\n");
-        const out = [];
-        for (let i = 0; i < lines.length; i++) {
-          let line = lines[i];
-          while (i + 1 < lines.length && /^[ \t]/.test(lines[i + 1])) {
-            line += lines[i + 1].slice(1);
-            i++;
-          }
-          out.push(line);
-        }
-        return out;
-      }
-      function parseICalDate(val) {
-        // YYYYMMDD or YYYYMMDDT...Z / with timezone (we’ll best-effort)
-        if (!val) return null;
-        if (/^\d{8}$/.test(val)) {
-          const y = val.slice(0, 4),
-            m = val.slice(4, 6),
-            d = val.slice(6, 8);
-          return { allDay: true, date: `${y}-${m}-${d}` };
-        }
-        // Date-Time: YYYYMMDDTHHMMSSZ or without Z. We convert to local ISO string.
-        const m = val.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?/);
-        if (m) {
-          const [_, Y, Mo, Da, H, Mi, S, z] = m;
-          if (z) {
-            const d = new Date(Date.UTC(+Y, +Mo - 1, +Da, +H, +Mi, +S));
-            return { allDay: false, dateTime: d.toISOString() };
-          } else {
-            // Treat as local
-            const d = new Date(+Y, +Mo - 1, +Da, +H, +Mi, +S);
-            return {
-              allDay: false,
-              dateTime: new Date(
-                d.getTime() - d.getTimezoneOffset() * 60000
-              ).toISOString(),
-            };
-          }
-        }
-        return null;
-      }
-      function parseICS(text) {
-        const lines = unfoldICS(text);
-        const events = [];
-        let inEvent = false;
-        let cur = {};
-        for (const raw of lines) {
-          const line = raw.trim();
-          if (line === "BEGIN:VEVENT") {
-            inEvent = true;
-            cur = {};
-            continue;
-          }
-          if (line === "END:VEVENT") {
-            // finalize
-            const ev = { summary: cur.SUMMARY || "(no title)" };
-            const dtStart = parseICalDate(cur.DTSTART?.value || cur.DTSTART);
-            const dtEnd = parseICalDate(cur.DTEND?.value || cur.DTEND);
-            if (dtStart?.allDay) {
-              ev.allDay = true;
-              ev.start = dtStart.date;
-              ev.end = dtEnd?.date || null;
-            } else {
-              ev.allDay = false;
-              ev.startDT = dtStart?.dateTime || null;
-              ev.endDT = dtEnd?.dateTime || null;
-              // also set friendly start (YYYY-MM-DD) for grouping
-              if (ev.startDT) ev.start = ev.startDT.slice(0, 10);
-            }
-            events.push(ev);
-            inEvent = false;
-            cur = {};
-            continue;
-          }
-          if (!inEvent) continue;
-
-          // Split property; handle params like DTSTART;TZID=America/Toronto:
-          const idx = line.indexOf(":");
-          if (idx === -1) continue;
-          const keyPart = line.slice(0, idx);
-          const value = line.slice(idx + 1);
-          const semi = keyPart.indexOf(";");
-          if (semi !== -1) {
-            const prop = keyPart.slice(0, semi).toUpperCase();
-            const params = keyPart.slice(semi + 1);
-            cur[prop] = { params, value };
-          } else {
-            const prop = keyPart.toUpperCase();
-            cur[prop] = value;
-          }
-        }
-        return events;
-      }
-
-      function getEventsForDate(dateStr) {
-        // All-day matches if start <= date <= (end-1 day) or equals start if no end.
-        // Timed events match by start date.
-        const list = [];
-        for (const e of state.gcal.events) {
-          if (e.allDay) {
-            if (e.start === dateStr)
-              list.push({ time: "All-day", title: e.summary });
-            else if (e.end) {
-              const sd = new Date(e.start),
-                ed = new Date(e.end);
-              const cur = new Date(dateStr);
-              sd.setHours(0, 0, 0, 0);
-              ed.setHours(0, 0, 0, 0);
-              cur.setHours(0, 0, 0, 0);
-              // iCal DTEND is exclusive for all-day multi-day events
-              if (cur >= sd && cur < ed)
-                list.push({ time: "All-day", title: e.summary });
-            }
-          } else if (e.startDT) {
-            if (e.start === dateStr) {
-              const t = new Date(e.startDT).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              list.push({ time: t, title: e.summary });
-            }
-          }
-        }
-        return list.sort((a, b) => a.time.localeCompare(b.time));
-      }
-
-      function updateCalBadge() {
-        const n = state.gcal?.events?.length || 0;
-        const badge = $("#calBadge");
-        $("#calCount").textContent = String(n);
-        badge.style.display = n ? "inline-flex" : "none";
-      }
-
-      async function importICSFile() {
-        const inp = document.createElement("input");
-        inp.type = "file";
-        inp.accept = ".ics,text/calendar";
-        inp.onchange = async () => {
-          const f = inp.files?.[0];
-          if (!f) return;
-          const text = await f.text();
-          try {
-            const events = parseICS(text);
-            state.gcal = { events };
-            save();
-            renderWeek(); // annotate week with events
-            alert(`Imported ${events.length} calendar events.`);
-          } catch (e) {
-            console.error(e);
-            alert("Failed to parse .ics file.");
-          }
-        };
-        inp.click();
       }
 
       /******************** Palette & Planner rendering ********************/
@@ -903,24 +752,24 @@
           const el = document.createElement("div");
           el.className = "day";
           el.dataset.date = ds;
-          el.innerHTML = `<header><div>${d.toLocaleDateString(undefined, {
+          el.innerHTML = `<header>
+          <div>${d.toLocaleDateString(undefined, {
             weekday: "short",
             month: "short",
             day: "numeric",
-          })}</div><button class="btn small ghost" data-clear>Clear</button></header>
-          <div class="slots">${MEALS.map(
-            (m) =>
-              `<div class="slot" data-meal="${m}"><span class="meal-pill">${m}</span><div class="assignments"></div></div>`
-          ).join("")}</div>`;
-
-          // Clear button
+          })}</div>
+          <div style="display:flex;gap:6px"><button class="btn small ghost" data-clear>Clear</button></div>
+        </header>
+        <div class="slots">${MEALS.map(
+          (m) =>
+            `<div class="slot" data-meal="${m}"><span class="meal-pill">${m}</span><div class="assignments"></div></div>`
+        ).join("")}</div>
+        <div class="notes-wrap"><textarea placeholder="Notes…"></textarea></div>`;
           el.querySelector("[data-clear]").addEventListener("click", () => {
             resetDay(ds);
             save();
             renderWeek();
           });
-
-          // Drag slots
           el.querySelectorAll(".slot").forEach((slot) => {
             slot.addEventListener("dragover", onDragOver);
             slot.addEventListener(
@@ -932,8 +781,14 @@
               addFreeText(ds, slot.dataset.meal)
             );
           });
-
-          // Fill assignments
+          // notes binding
+          const notesTA = el.querySelector(".notes-wrap textarea");
+          notesTA.value = day.notes || "";
+          notesTA.addEventListener("input", () => {
+            ensureDay(ds).notes = notesTA.value;
+            save();
+          });
+          // fill assignments
           el.querySelectorAll(".slot").forEach((slot) => {
             const meal = slot.dataset.meal;
             const list = day[meal] || [];
@@ -951,20 +806,6 @@
               wrap.appendChild(chip);
             });
           });
-
-          // Inject up to 3 Google Calendar events for that day
-          const evs = getEventsForDate(ds).slice(0, 3);
-          if (evs.length) {
-            const ul = document.createElement("ul");
-            ul.className = "gcal";
-            evs.forEach((e) => {
-              const li = document.createElement("li");
-              li.textContent = `${e.time} — ${e.title}`;
-              ul.appendChild(li);
-            });
-            el.querySelector(".slots").prepend(ul);
-          }
-
           grid.appendChild(el);
         }
       }
@@ -1045,10 +886,10 @@
         row.innerHTML = `<input type="number" step="any" placeholder="Qty" value="${
           i.qty || ""
         }">
-          <input placeholder="Unit" value="${i.unit || ""}">
-          <input placeholder="Ingredient" value="${i.item || ""}">
-          <input placeholder="Category (e.g., produce)" value="${i.cat || ""}">
-          <button class="btn small ghost">✕</button>`;
+      <input placeholder="Unit" value="${i.unit || ""}">
+      <input placeholder="Ingredient" value="${i.item || ""}">
+      <input placeholder="Category (e.g., produce)" value="${i.cat || ""}">
+      <button class="btn small ghost">✕</button>`;
         row
           .querySelector("button")
           .addEventListener("click", () => row.remove());
@@ -1253,7 +1094,7 @@
       /******************** Import / Export ********************/
       function buildExportJSON() {
         return JSON.stringify(
-          { recipes: state.recipes, plan: state.plan, gcal: state.gcal },
+          { recipes: state.recipes, plan: state.plan },
           null,
           2
         );
@@ -1297,10 +1138,11 @@
               if (obj.recipes && obj.plan) {
                 state.recipes = obj.recipes.map(enrichRecipe);
                 state.plan = obj.plan;
-                state.gcal = obj.gcal || { events: [] };
                 save();
                 renderPalette();
                 renderWeek();
+                loadUI();
+                applyPalette();
                 renderRecipeList();
               } else alert("Invalid file");
             } catch (e) {
@@ -1310,20 +1152,10 @@
           r.readAsText(f);
         };
         inp.click();
-      }
+      } /******************** Export Modal Helper ********************/
       function openExportModal() {
         $("#exportText").value = buildExportJSON();
         show("#exportModal", true);
-      }
-      function clearCalendar() {
-        if (!state.gcal?.events?.length) {
-          alert("No imported calendar events to clear.");
-          return;
-        }
-        if (!confirm("Remove all imported .ics events?")) return;
-        state.gcal = { events: [] };
-        save();
-        renderWeek();
       }
 
       /******************** Month View ********************/
@@ -1335,43 +1167,67 @@
         const first = new Date(y, m, 1),
           last = new Date(y, m + 1, 0);
         const days = [];
-        for (let d = 1; d <= last.getDate(); d++) days.push(new Date(y, m, d));
+        for (let d = 1; d <= last.getDate(); d++) {
+          days.push(new Date(y, m, d));
+        }
         const grid = document.createElement("div");
         grid.style.display = "grid";
         grid.style.gridTemplateColumns = "repeat(7,1fr)";
         grid.style.gap = "6px";
-        ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((w) => {
+        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((w) => {
           const h = document.createElement("div");
           h.textContent = w;
           h.style.color = "#94a3b8";
           grid.appendChild(h);
         });
-        const offset = (first.getDay() + 6) % 7;
-        for (let i = 0; i < offset; i++)
+        const offset = first.getDay();
+        for (let i = 0; i < offset; i++) {
           grid.appendChild(document.createElement("div"));
+        }
         days.forEach((d) => {
           const ds = fmtDate(d);
           const box = document.createElement("div");
           box.className = "card";
           box.style.minHeight = "90px";
           const meals = state.plan[ds];
-          const events = getEventsForDate(ds)
-            .slice(0, 2)
-            .map((e) => `${e.time} ${e.title}`)
-            .join(" · ");
-          box.innerHTML = `<div style="font-weight:700">${d.getDate()}</div>
-            <div class="pill">${composeDaySummary(meals)}</div>
-            ${
-              events
-                ? `<div class="pill" style="margin-top:6px">${events}</div>`
-                : ""
-            }`;
+          box.innerHTML = `<div style="font-weight:700">${d.getDate()}</div><div class="pill">${composeDaySummary(
+            meals
+          )}</div>`;
           grid.appendChild(box);
         });
         const body = $("#monthBody");
         body.innerHTML = "";
         body.appendChild(grid);
         show("#monthModal", true);
+      }
+
+      /******************** UI prefs (palette collapse) ********************/
+      let ui = { palette: true };
+      function loadUI() {
+        try {
+          ui = JSON.parse(localStorage.getItem("mealPlannerUI")) || ui;
+        } catch (e) {}
+      }
+      function saveUI() {
+        localStorage.setItem("mealPlannerUI", JSON.stringify(ui));
+      }
+      function applyPalette() {
+        const wrap = document.querySelector(".planner-wrap");
+        if (!wrap) return;
+        if (ui.palette) {
+          wrap.classList.remove("collapsed");
+          const b = document.getElementById("togglePalette");
+          if (b) b.textContent = "Hide recipes";
+        } else {
+          wrap.classList.add("collapsed");
+          const b = document.getElementById("togglePalette");
+          if (b) b.textContent = "Show recipes";
+        }
+      }
+      function togglePalette() {
+        ui.palette = !ui.palette;
+        applyPalette();
+        saveUI();
       }
 
       /******************** Modal helpers & Tabs ********************/
@@ -1422,6 +1278,8 @@
         }
       });
       $("#btnMonthView").addEventListener("click", openMonth);
+      $("#togglePalette").addEventListener("click", togglePalette);
+      $("#btnPrint").addEventListener("click", () => window.print());
 
       // Palette
       $("#search").addEventListener("input", renderPalette);
@@ -1442,10 +1300,6 @@
         navigator.clipboard.writeText($("#exportText").value);
         alert("Copied!");
       });
-      $("#btnClearCalendar").addEventListener("click", clearCalendar);
-
-      // .ics import
-      $("#btnICSImport").addEventListener("click", importICSFile);
 
       // Recipes tab
       $("#rm_new").addEventListener("click", () => openRecipeEditor(null));
@@ -1457,7 +1311,6 @@
       load();
       const today = startOfWeek(new Date());
       $("#weekStart").value = fmtDate(today);
-      updateCalBadge();
       renderPalette();
       renderWeek();
     </script>
