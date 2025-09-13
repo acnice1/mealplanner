@@ -1,0 +1,384 @@
+{
+  "recipes": [
+    {
+      "id": "788a5f0e-3ae9-453a-929c-063b78d030ff",
+      "name": "Spaghetti Bolognese",
+      "servings": 4,
+      "tags": ["quick"],
+      "link": "",
+      "ingredients": [
+        { "qty": 500, "unit": "g", "item": "spaghetti", "cat": "grains" },
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 1, "unit": "jar", "item": "tomato sauce", "cat": "canned" },
+        { "qty": 1, "unit": "", "item": "onion", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "29cbb39b-4bf3-415f-b689-49570178fbdb",
+      "name": "Chicken Stir Fry",
+      "servings": 4,
+      "tags": ["quick", "kid-friendly"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "breast", "item": "chicken", "cat": "meat" },
+        { "qty": 2, "unit": "cup", "item": "mixed vegetables", "cat": "produce" },
+        { "qty": 1, "unit": "cup", "item": "rice", "cat": "grains" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "d702c275-cd46-4aff-9e14-fe9bf58784d3",
+      "name": "Veggie Chili",
+      "servings": 6,
+      "tags": ["vegan", "comfort"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "can", "item": "beans", "cat": "canned" },
+        { "qty": 1, "unit": "can", "item": "diced tomatoes", "cat": "canned" },
+        { "qty": 1, "unit": "", "item": "onion", "cat": "produce" },
+        { "qty": 2, "unit": "clove", "item": "garlic", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+
+    {
+      "id": "c5a2b9a9-0d6e-4f83-8f0e-3f0620c9f9a1",
+      "name": "BBQ Chicken, Salad, Buns",
+      "servings": 4,
+      "tags": ["quick", "kid-friendly", "summer"],
+      "link": "",
+      "ingredients": [
+        { "qty": 4, "unit": "piece", "item": "chicken breast", "cat": "meat" },
+        { "qty": 4, "unit": "bun", "item": "burger buns", "cat": "grains" },
+        { "qty": 1, "unit": "bag", "item": "mixed salad greens", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "1f7a7a7b-2c2c-4a7e-87a1-7c0f8f0b1d23",
+      "name": "Butter Chicken and Naan",
+      "servings": 4,
+      "tags": ["comfort"],
+      "link": "",
+      "ingredients": [
+        { "qty": 4, "unit": "piece", "item": "chicken thigh", "cat": "meat" },
+        { "qty": 1, "unit": "jar", "item": "butter chicken sauce", "cat": "canned" },
+        { "qty": 4, "unit": "piece", "item": "naan bread", "cat": "grains" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "8f86ecb6-6b7d-4d5f-b8d5-b7d6a1d2a9c4",
+      "name": "Cabbage Rolls",
+      "servings": 6,
+      "tags": ["comfort", "make-ahead"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "head", "item": "cabbage", "cat": "produce" },
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 1, "unit": "cup", "item": "rice", "cat": "grains" },
+        { "qty": 1, "unit": "can", "item": "tomato sauce", "cat": "canned" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "0a2c4b1e-5e7d-4d6c-9f7a-1b2c3d4e5f60",
+      "name": "DIY Pizza",
+      "servings": 4,
+      "tags": ["kid-friendly", "weekend"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "piece", "item": "pizza dough", "cat": "grains" },
+        { "qty": 1, "unit": "cup", "item": "mozzarella cheese", "cat": "dairy" },
+        { "qty": 1, "unit": "cup", "item": "tomato sauce", "cat": "canned" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "b9a3d2f1-6c4e-4e8a-9a1f-2f3e4d5c6b71",
+      "name": "Pesto Chicken Pasta",
+      "servings": 4,
+      "tags": ["quick", "healthy"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "breast", "item": "chicken", "cat": "meat" },
+        { "qty": 500, "unit": "g", "item": "pasta", "cat": "grains" },
+        { "qty": 1, "unit": "jar", "item": "pesto", "cat": "condiments" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "e1d2c3b4-a5f6-4d7e-8c9b-0a1b2c3d4e5f",
+      "name": "Chili Bowls",
+      "servings": 4,
+      "tags": ["comfort"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 2, "unit": "can", "item": "beans", "cat": "canned" },
+        { "qty": 1, "unit": "can", "item": "tomato sauce", "cat": "canned" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a6b7c8d",
+      "name": "Sausages and Pasta",
+      "servings": 4,
+      "tags": ["quick"],
+      "link": "",
+      "ingredients": [
+        { "qty": 4, "unit": "link", "item": "sausage", "cat": "meat" },
+        { "qty": 500, "unit": "g", "item": "pasta", "cat": "grains" },
+        { "qty": 1, "unit": "cup", "item": "tomato sauce", "cat": "canned" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "9b8a7c6d-5e4f-4d3c-8b2a-1f0e9d8c7b6a",
+      "name": "Burrito Bowls",
+      "servings": 4,
+      "tags": ["healthy", "customizable"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "chicken breast", "cat": "meat" },
+        { "qty": 2, "unit": "cup", "item": "rice", "cat": "grains" },
+        { "qty": 1, "unit": "can", "item": "black beans", "cat": "canned" },
+        { "qty": 1, "unit": "cup", "item": "lettuce", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "42f6a1b9-c3de-4a5e-9f3a-6b7c8d9e0f12",
+      "name": "Vermicelli Noodle Bowls",
+      "servings": 4,
+      "tags": ["healthy"],
+      "link": "",
+      "ingredients": [
+        { "qty": 250, "unit": "g", "item": "vermicelli noodles", "cat": "grains" },
+        { "qty": 1, "unit": "cup", "item": "bean sprouts", "cat": "produce" },
+        { "qty": 1, "unit": "cup", "item": "cucumber", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "7c6b5a4d-3e2f-4a1b-9c8d-0e1f2a3b4c5d",
+      "name": "Sausage and Sweet Potato Sheetpan",
+      "servings": 4,
+      "tags": ["easy", "weeknight"],
+      "link": "",
+      "ingredients": [
+        { "qty": 4, "unit": "link", "item": "sausage", "cat": "meat" },
+        { "qty": 2, "unit": "", "item": "sweet potatoes", "cat": "produce" },
+        { "qty": 1, "unit": "cup", "item": "green beans", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "f2e1d0c9-b8a7-4f6e-9d5c-3b2a1c0e9f8d",
+      "name": "Szechuan Beef and Green Beans",
+      "servings": 4,
+      "tags": ["weeknight"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "beef strips", "cat": "meat" },
+        { "qty": 2, "unit": "cup", "item": "green beans", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "Meatloaf",
+      "servings": 4,
+      "tags": ["comfort"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 1, "unit": "cup", "item": "breadcrumbs", "cat": "grains" },
+        { "qty": 1, "unit": "", "item": "egg", "cat": "dairy" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+      "name": "Pasta Fagiole",
+      "servings": 4,
+      "tags": ["comfort"],
+      "link": "",
+      "ingredients": [
+        { "qty": 250, "unit": "g", "item": "small pasta", "cat": "grains" },
+        { "qty": 1, "unit": "can", "item": "cannellini beans", "cat": "canned" },
+        { "qty": 1, "unit": "can", "item": "diced tomatoes", "cat": "canned" },
+        { "qty": 1, "unit": "", "item": "onion", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "name": "Pork Banh Mi Bowls",
+      "servings": 4,
+      "tags": ["healthy", "customizable"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "ground pork", "cat": "meat" },
+        { "qty": 2, "unit": "cup", "item": "rice", "cat": "grains" },
+        { "qty": 1, "unit": "cup", "item": "cucumber", "cat": "produce" },
+        { "qty": 1, "unit": "cup", "item": "carrot", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80",
+      "name": "Quesadillas",
+      "servings": 4,
+      "tags": ["quick", "kid-friendly"],
+      "link": "",
+      "ingredients": [
+        { "qty": 8, "unit": "tortilla", "item": "flour tortillas", "cat": "grains" },
+        { "qty": 2, "unit": "cup", "item": "shredded cheese", "cat": "dairy" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8091",
+      "name": "Hamburgers",
+      "servings": 4,
+      "tags": ["kid-friendly", "summer"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 4, "unit": "bun", "item": "burger buns", "cat": "grains" },
+        { "qty": 1, "unit": "cup", "item": "lettuce", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8091a2",
+      "name": "Chicken Fingers",
+      "servings": 4,
+      "tags": ["kid-friendly"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "breast", "item": "chicken", "cat": "meat" },
+        { "qty": 1, "unit": "cup", "item": "breadcrumbs", "cat": "grains" },
+        { "qty": 2, "unit": "", "item": "egg", "cat": "dairy" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "0f1e2d3c-4b5a-4968-8a79-b0c1d2e3f4a5",
+      "name": "Haddock",
+      "servings": 4,
+      "tags": ["healthy"],
+      "link": "",
+      "ingredients": [
+        { "qty": 4, "unit": "fillet", "item": "haddock", "cat": "meat" },
+        { "qty": 1, "unit": "cup", "item": "breadcrumbs", "cat": "grains" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "10293847-5a6b-4c3d-8e9f-0a1b2c3d4e5f",
+      "name": "Meatballs",
+      "servings": 4,
+      "tags": ["comfort"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 1, "unit": "cup", "item": "breadcrumbs", "cat": "grains" },
+        { "qty": 1, "unit": "", "item": "egg", "cat": "dairy" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "11223344-5566-4777-8899-aabbccddeeff",
+      "name": "Hot Dogs / Sausages",
+      "servings": 4,
+      "tags": ["kid-friendly", "summer"],
+      "link": "",
+      "ingredients": [
+        { "qty": 8, "unit": "piece", "item": "hot dogs or sausages", "cat": "meat" },
+        { "qty": 8, "unit": "bun", "item": "hot dog buns", "cat": "grains" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "22334455-6677-4888-99aa-bbccddeeff00",
+      "name": "Olivieri Pasta",
+      "servings": 4,
+      "tags": ["quick"],
+      "link": "",
+      "ingredients": [
+        { "qty": 500, "unit": "g", "item": "fresh pasta (Olivieri)", "cat": "grains" },
+        { "qty": 1, "unit": "jar", "item": "tomato sauce", "cat": "canned" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "33445566-7788-4999-aabb-ccddeeff0011",
+      "name": "Chicken Pot Pie",
+      "servings": 4,
+      "tags": ["comfort", "make-ahead"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "cup", "item": "diced chicken", "cat": "meat" },
+        { "qty": 2, "unit": "cup", "item": "mixed vegetables", "cat": "produce" },
+        { "qty": 1, "unit": "pkg", "item": "pie crust", "cat": "grains" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "44556677-8899-4aaa-bbcc-ddeeff001122",
+      "name": "Beef Pot Pie",
+      "servings": 4,
+      "tags": ["comfort", "make-ahead"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "cup", "item": "diced beef", "cat": "meat" },
+        { "qty": 2, "unit": "cup", "item": "mixed vegetables", "cat": "produce" },
+        { "qty": 1, "unit": "pkg", "item": "pie crust", "cat": "grains" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "55667788-99aa-4bbb-ccdd-eeff00112233",
+      "name": "Pea Soup",
+      "servings": 4,
+      "tags": ["comfort", "vegan"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "cup", "item": "split peas", "cat": "grains" },
+        { "qty": 1, "unit": "", "item": "onion", "cat": "produce" },
+        { "qty": 1, "unit": "", "item": "carrot", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "66778899-aabb-4ccc-ddee-ff0011223344",
+      "name": "Bean Soup",
+      "servings": 4,
+      "tags": ["comfort", "vegan"],
+      "link": "",
+      "ingredients": [
+        { "qty": 2, "unit": "can", "item": "mixed beans", "cat": "canned" },
+        { "qty": 1, "unit": "can", "item": "diced tomatoes", "cat": "canned" },
+        { "qty": 1, "unit": "", "item": "onion", "cat": "produce" }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "778899aa-bbcc-4ddd-eeff-001122334455",
+      "name": "Beef Tacos",
+      "servings": 4,
+      "tags": ["quick", "kid-friendly"],
+      "link": "",
+      "ingredients": [
+        { "qty": 1, "unit": "lb", "item": "ground beef", "cat": "meat" },
+        { "qty": 8, "unit": "pcs", "item": "taco shells", "cat": "grains" },
+        { "qty": 1, "unit": "cup", "item": "lettuce", "cat": "produce" },
+        { "qty": 1, "unit": "cup", "item": "cheddar cheese", "cat": "dairy" }
+      ],
+      "notes": ""
+    }
+  ]
+}
